@@ -32,7 +32,7 @@
   },
   "build": {
     "productName": "dotx",
-    "appId": "com.electron.ee",
+    "appId": "com.jiangchangxiong",
     "copyright": "JiangChangXiong",
     "directories": {
       "output": "out"
