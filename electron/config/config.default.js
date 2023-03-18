@@ -146,7 +146,7 @@ module.exports = (appInfo) => {
     },
     tray: {
       enable: true,
-      title: 'EE程序',
+      title: 'DotX',
       icon: '/public/images/tray_logo.png'
     },
     security: {
