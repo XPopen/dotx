@@ -149,7 +149,9 @@ class PasswordService extends Service {
     `CREATE TABLE ${tableName}
      (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        password CHAR(50) NOT NULL,
+        password CHAR(100) NOT NULL,
+        account CHAR(100) NOT NULL,
+        description CHAR(50) NOT NULL,
         time TIMESTAMP,
         labels CHAR(255),
         belong INTEGER,
@@ -261,7 +263,7 @@ class PasswordService extends Service {
     let table = 'b_password';
     await this.checkAndCreatePasswordTableSqlite(table);
 
-    const insert = this.demoSqliteDB.db.prepare(`INSERT INTO ${table} (password, labels, time, belong, sort) VALUES (@password, @labels, @time, @belong, @sort)`);
+    const insert = this.demoSqliteDB.db.prepare(`INSERT INTO ${table} (account, password, description, labels, time, belong, sort) VALUES (@account, @password, @description, @labels, @time, @belong, @sort)`);
     insert.run(data);
 
     return true;

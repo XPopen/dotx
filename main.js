@@ -47,6 +47,7 @@ class Main extends Application {
   }
 }
 
+// 隐藏菜单栏
 electron.Menu.setApplicationMenu(null);
 // Instantiate an app object
 EE.app = new Main();
