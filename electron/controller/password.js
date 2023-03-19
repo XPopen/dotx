@@ -36,47 +36,49 @@ class PasswordController extends Controller {
    */
 
   /**
-   * json数据库操作
+   * sqlite数据库操作
    */   
-  async dbOperation(args) {
+  async sqlitedbOperation(args) {
     const { service } = this;
     const paramsObj = args;
     //Log.info('eeeee paramsObj:', paramsObj);
     const data = {
       action: paramsObj.action,
       result: null,
-      all_list: []
     };
     
     switch (paramsObj.action) {
       case 'add' :
-        data.result = await service.password.addPassword(paramsObj.info);;
+        data.result = await service.password.addPasswordDataSqlite(paramsObj.info);;
         break;
       case 'del' :
-        data.result = await service.password.delPassword(paramsObj.delete_name);;
+        data.result = await service.password.delPasswordDataSqlite(paramsObj.delete_id);;
         break;
       case 'update' :
-        data.result = await service.password.updatePassword(paramsObj.update_info);
+        data.result = await service.password.updatePasswordDataSqlite(paramsObj.info);
         break;
       case 'get' :
-        data.result = await service.password.getPassword(paramsObj.search_id);
+        data.result = await service.password.getPasswordDataSqlite(paramsObj.search_id);
+        break;
+      case 'all' :
+        data.result = await service.password.getAllPasswordDataSqlite(paramsObj.search_belong);
         break;
       case 'addBelong' :
-        data.result = await service.password.addBelong(paramsObj.info);;
+        data.result = await service.password.addPasswordDataSqlite(paramsObj.info);;
         break;
       case 'delBelong' :
-        data.result = await service.password.delBelong(paramsObj.delete_id);;
+        data.result = await service.password.delPasswordDataSqlite(paramsObj.delete_id);;
         break;
       case 'updateBelong' :
-        data.result = await service.password.updateBelong(paramsObj.update_info);
+        data.result = await service.password.updatePasswordDataSqlite(paramsObj.info);
         break;
       case 'getBelong' :
-        data.result = await service.password.getBelong(paramsObj.search_id);
+        data.result = await service.password.getPasswordDataSqlite(paramsObj.search_id);
+        break;
+      case 'allBelong' :
+        data.result = await service.password.getAllPasswordBelongDataSqlite();
         break;
     }
-
-    data.all_list = await service.password.getAllPasswordData();
-
     return data;
   }
 }

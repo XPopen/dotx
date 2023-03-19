@@ -4,11 +4,21 @@
       theme="light"
       class="layout-sider"
     >
-      <a-menu theme="light" mode="inline" :default-selected-keys="[default_key]" :selected-keys="[current]" @click="menuClick">
-        <a-menu-item v-for="(item, idx) in belongs" :key="idx">
+      <a-menu 
+        theme="light" 
+        mode="inline" 
+        :default-selected-keys="[default_key]" 
+        :selected-keys="[current]" 
+        @click="menuClick"
+        style="padding-bottom: 40px"
+      >
+        <a-menu-item v-for="(item) in belongs" :key="item.id">
           <span>{{ item.belong }}</span>
         </a-menu-item>
       </a-menu>
+      <div class="belong-plus">
+        <a-icon type="plus" />
+      </div>
     </a-layout-sider>
     <a-layout>
       <a-layout-content>
@@ -84,6 +94,7 @@ export default {
   data() {
     return {
       belongs: [{
+        id: 1,
         belong: 'ERP系统',
         color: ''
       }],
@@ -161,7 +172,9 @@ export default {
           sort: 1
         },
       ],
-      description: ''
+      description: '',
+      default_key: 1,
+      current: 1,
     };
   },
   computed: {
@@ -196,24 +209,24 @@ export default {
     }
   },
   mounted () {
-   
-    this.getAllTestData();
+    this.getBelongs();
   },
   created () {
     
   },
   methods: {
-    getAllTestData () {
+    getBelongs () {
       const self = this;
       const params = {
-        action: 'all',
+        action: 'allBelong',
       }
-      this.$ipc.invoke(ipcApiRoute.dbOperation, params).then(res => {
+      this.$ipc.invoke(ipcApiRoute.passwordOperation, params).then(res => {
         console.log('res:', res);
-        if (res.all_list.length == 0) {
+        if (res.result.length == 0) {
           return false;
         }
-        self.all_list = res.all_list;
+        // self.belongs = res.result;
+        // 设置默认选中和获取密码信息
       }) 
     },
     dbOperation (ac) {
@@ -250,10 +263,26 @@ export default {
       }) 
     },
     menuClick(e) {
+      console.log(e.key)
       this.current = e.key;
     },
     addPassword() {
-      
+      // 加载添加密码弹窗页面
+      this.$ipc.invoke(ipcApiRoute.createWindow, {
+        type: 'vue',
+        content: '/#/password/add'
+      }).then(r => {
+        console.log(r);
+      })
+    },
+    updatePassword(id) {
+      // 加载添加密码弹窗页面
+      this.$ipc.invoke(ipcApiRoute.createWindow, {
+        type: 'vue',
+        content: '/#/password/update/' + id
+      }).then(r => {
+        console.log(r);
+      })
     },
   }
 };
@@ -267,6 +296,23 @@ export default {
     border-right: 1px solid #e8e8e8;
     background-color: #FAFAFA;
     overflow: auto;
+  }
+
+  .belong-plus {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    cursor: pointer;
+    text-align: center;
+    border-top: 1px dashed rgba(41, 207, 116, 1);
+    color: rgba(41, 207, 116, 1);
+    font-weight: bold;
+  }
+
+  .belong-plus:hover {
+    background-color: rgba(0, 0, 0, 0.05);
   }
 }
 </style>

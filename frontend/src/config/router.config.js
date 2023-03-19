@@ -130,7 +130,19 @@ export const constantRouterMap = [
       {
         path: '/password',
         name: 'Password',
-        component: () => import('@/views/password/index')
+        component: () => import('@/views/password/index'),
+        children: [
+          {
+            path: '/password/add',
+            name: 'PasswordAdd',
+            component: () => import('@/views/password/components/add')
+          },
+          {
+            path: '/password/update/{id}',
+            name: 'PasswordUpdate',
+            component: () => import('@/views/password/components/update')
+          }
+        ] 
       },
       {
         path: '/website',

@@ -37,6 +37,7 @@ const ipcApiRoute = {
   someJob: 'controller.example.someJob',
   timerJobProgress: 'controller.example.timerJobProgress',
   hello: 'controller.example.hello',
+  passwordOperation: 'controller.password.sqlitedbOperation',
 }
 
 /**
