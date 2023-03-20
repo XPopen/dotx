@@ -1,20 +1,23 @@
 <template>
   <a-layout id="app-menu">
     <a-layout-sider theme="light" class="layout-sider">
-      <a-menu
-        theme="light"
-        mode="inline"
-        :default-selected-keys="[default_key]"
-        :selected-keys="[current]"
-        style="margin-bottom: 40px"
-        @click="menuClick"
-      >
-        <a-menu-item v-for="item in belongs" :key="item.id">
-          <span>{{ item.belong }}</span>
-        </a-menu-item>
-      </a-menu>
-      <div class="belong-plus" @click="addPasswordBelong">
-        <a-icon type="plus" />
+      <div style="display: flex; flex-direction: column;">
+        <div>
+          <a-menu
+            theme="light"
+            mode="inline"
+            :default-selected-keys="[default_key]"
+            :selected-keys="[current]"
+            @click="menuClick"
+          >
+            <a-menu-item v-for="item in belongs" :key="item.id">
+              <span>{{ item.belong }}</span>
+            </a-menu-item>
+          </a-menu>
+        </div>
+        <div class="belong-plus" @click="addPasswordBelong">
+          <a-icon type="plus" />
+        </div>
       </div>
     </a-layout-sider>
     <a-layout>
@@ -333,11 +336,9 @@ export default {
   }
 
   .belong-plus {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
     height: 40px;
     line-height: 40px;
+    margin-top: auto;
     cursor: pointer;
     text-align: center;
     border-top: 1px dashed rgba(41, 207, 116, 1);
