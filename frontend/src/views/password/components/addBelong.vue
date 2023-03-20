@@ -120,8 +120,10 @@ export default {
     submit() {
       this.form.validateFields((err, values) => {
         if (!err) {
-          console.info(values);
           let self = this;
+          if (!values.sort) {
+            values.sort = 1
+          }
           const params = {
             action: "addBelong",
             info: { ...values, color: "#c0c0c0" },

@@ -67,9 +67,15 @@
                         <a-button type="dashed" title="历史">
                           <a-icon type="cluster" />
                         </a-button>
-                        <a-button type="danger" title="删除" @click="deletePassword(item.id)">
-                          <a-icon type="rest" />
-                        </a-button>
+                        <a-popconfirm placement="left" ok-text="确定" cancel-text="取消" @confirm="deletePassword(item.id)">
+                          <template slot="title">
+                            <p>提示</p>
+                            <p>确认删除这条密码信息？</p>
+                          </template>
+                          <a-button type="danger" title="删除">
+                            <a-icon type="rest" />
+                          </a-button>
+                        </a-popconfirm>
                       </a-button-group>
                     </div>
                   </a-col>
@@ -78,7 +84,7 @@
               <template #footer>
                 <div>
                   <a-icon type="exclamation-circle" />
-                  妥善管理自己的账号密码信息
+                  请妥善管理自己的账号密码信息
                 </div>
               </template>
             </a-list>
@@ -236,7 +242,6 @@ export default {
         self.$message.error(`请填写数据`);
       }
       this.$ipc.invoke(ipcApiRoute.dbOperation, params).then((res) => {
-        console.log("res:", res);
         if (ac == "get") {
           if (res.result.length == 0) {
             self.$message.error(`没有数据`);
@@ -285,7 +290,15 @@ export default {
       this.getPasswords()
     },
     deletePassword(id) {
-      let self = this;
+      const params = {
+        action: "del",
+        delete_id: id + "",
+      };
+      this.$ipc.invoke(ipcApiRoute.passwordOperation, params).then(() => {
+        this.$message.success(`删除成功`);
+        // 添加查询密码逻辑
+        this.getPasswords()
+      })
     },
     addPasswordBelong() {
       // 加载添加密码弹窗页面

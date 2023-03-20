@@ -161,8 +161,16 @@ export default {
     submit() {
       this.form.validateFields((err, values) => {
         if (!err) {
-          console.info(values);
           let self = this;
+          if (!values.sort) {
+            values.sort = 1
+          }
+          if (!values.description) {
+            values.description = ''
+          }
+          if (!values.website) {
+            values.website = ''
+          }
           const params = {
             action: "add",
             info: { ...values, labels: '', belong: this.belong },
