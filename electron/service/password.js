@@ -61,6 +61,7 @@ class PasswordService extends Service {
         description CHAR(50) NOT NULL,
         time TIMESTAMP,
         labels CHAR(255),
+        website CHAR(255),
         belong INTEGER,
         sort INT
      );`
@@ -162,7 +163,7 @@ class PasswordService extends Service {
    */
   async addPasswordDataSqlite(data) {
     await this.checkAndCreatePasswordTableSqlite(passwordTable);
-    const insert = this.passwordSqliteDB.db.prepare(`INSERT INTO ${passwordTable} (account, password, description, labels, time, belong, sort) VALUES (@account, @password, @description, @labels, @time, @belong, @sort)`);
+    const insert = this.passwordSqliteDB.db.prepare(`INSERT INTO ${passwordTable} (account, password, description, labels, website, time, belong, sort) VALUES (@account, @password, @description, @labels, @website, @time, @belong, @sort)`);
     insert.run(data);
     return true;
   }
@@ -182,7 +183,7 @@ class PasswordService extends Service {
    */
   async updatePasswordDataSqlite(data) {
     await this.checkAndCreatePasswordTableSqlite(passwordTable);
-    const updateUser = this.passwordSqliteDB.db.prepare(`UPDATE ${passwordTable} SET account = @account, password = @password, description = @description, labels = @labels, time = @time, sort = @sort WHERE id = @id`);
+    const updateUser = this.passwordSqliteDB.db.prepare(`UPDATE ${passwordTable} SET account = @account, password = @password, description = @description, labels = @labels, website = @website, time = @time, sort = @sort WHERE id = @id`);
     updateUser.run(data);
     return true;
   }  

@@ -1,14 +1,16 @@
 <template>
   <a-layout id="app-layout-sider">
-    <a-layout-sider
-      v-model="collapsed"
-      theme="light"
-      class="layout-sider"
-    >
+    <a-layout-sider v-model="collapsed" theme="light" class="layout-sider">
       <div class="logo">
-        <img class="pic-logo" src="~@/assets/logo.png">
+        <img class="pic-logo" src="~@/assets/logo.png" />
       </div>
-      <a-menu class="menu-item" theme="light" mode="inline" :default-selected-keys="[default_key]" @click="menuHandle">
+      <a-menu
+        class="menu-item"
+        theme="light"
+        mode="inline"
+        :default-selected-keys="[default_key]"
+        @click="menuHandle"
+      >
         <a-menu-item v-for="(menuInfo, index) in menu" :key="index">
           <a-icon :type="menuInfo.icon" />
           {{ menuInfo.title }}
@@ -24,63 +26,74 @@
 </template>
 <script>
 export default {
-  name: 'AppSider',
+  name: "AppSider",
   data() {
     return {
       collapsed: true,
-      default_key: 'menu_1',
-      current: '',
+      default_key: "menu_1",
+      current: "",
       menu: {
-        'menu_1' : {
-          icon: 'safety',
-          title: '密码',
-          pageName: 'Password',
+        menu_1: {
+          icon: "safety",
+          title: "密码",
+          pageName: "Password",
           params: {},
         },
-        'menu_2' : {
-          icon: 'global',
-          title: '站点',
-          pageName: 'Website',
+        menu_2: {
+          icon: "global",
+          title: "站点",
+          pageName: "Website",
           params: {},
         },
-        'menu_3' : {
-          icon: 'hdd',
-          title: '文档',
-          pageName: 'Document',
+        menu_3: {
+          icon: "smile",
+          title: "笔记",
+          pageName: "Notebook",
           params: {},
         },
-        'menu_66' : {
-          icon: 'setting',
-          title: '设置',
-          pageName: 'Setting',
-          params: {},
-        },      
-        'menu_99' : {
-          icon: 'home',
-          title: '框架',
-          pageName: 'Base',
+        menu_4: {
+          icon: "hdd",
+          title: "文档",
+          pageName: "Document",
           params: {},
         },
-        'menu_100' : {
-          icon: 'desktop',
-          title: '其它',
-          pageName: 'Other',
+        menu_5: {
+          icon: "pushpin",
+          title: "Flag",
+          pageName: "Flag",
           params: {},
-        },          
-      }
+        },
+        menu_66: {
+          icon: "setting",
+          title: "设置",
+          pageName: "Setting",
+          params: {},
+        },
+        menu_99: {
+          icon: "home",
+          title: "框架",
+          pageName: "Base",
+          params: {},
+        },
+        menu_100: {
+          icon: "desktop",
+          title: "其它",
+          pageName: "Other",
+          params: {},
+        },
+      },
     };
   },
-  created () {
-  },
-  mounted () {
-    this.menuHandle()
+  created() {},
+  mounted() {
+    this.menuHandle();
   },
   methods: {
-    menuHandle (e) {
+    menuHandle(e) {
       this.current = e ? e.key : this.default_key;
-      const linkInfo = this.menu[this.current]
-      console.log('[home] load page:', linkInfo.pageName);
-      this.$router.push({ name: linkInfo.pageName, params: linkInfo.params})
+      const linkInfo = this.menu[this.current];
+      console.log("[home] load page:", linkInfo.pageName);
+      this.$router.push({ name: linkInfo.pageName, params: linkInfo.params });
     },
   },
 };

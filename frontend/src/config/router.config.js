@@ -159,6 +159,16 @@ export const constantRouterMap = [
         name: 'Setting',
         component: () => import('@/views/setting/index')
       },
+      {
+        path: '/notebook',
+        name: 'Notebook',
+        component: () => import('@/views/notebook/index')
+      },
+      {
+        path: '/flag',
+        name: 'Flag',
+        component: () => import('@/views/flag/index')
+      },
     ]
   },
   {
