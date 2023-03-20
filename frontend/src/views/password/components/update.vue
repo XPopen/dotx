@@ -1,20 +1,192 @@
 <template>
-  <h1>更新</h1>
+  <a-drawer
+    :title="title"
+    placement="right"
+    :closable="false"
+    :width="380"
+    :visible="visible"
+    :after-visible-change="afterVisibleChange"
+  >
+    <div
+      style="
+        background-color: transparent;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      "
+    >
+      <a-form :form="form">
+        <a-form-item
+          :label-col="formItemLayout.labelCol"
+          :wrapper-col="formItemLayout.wrapperCol"
+          label="账户"
+        >
+          <a-input
+            v-decorator="[
+              'account',
+              { rules: [{ required: true, message: '请输入账户' }] },
+            ]"
+            placeholder="请输入账户"
+          />
+        </a-form-item>
+        <a-form-item
+          :label-col="formItemLayout.labelCol"
+          :wrapper-col="formItemLayout.wrapperCol"
+          label="密码"
+        >
+          <a-input
+            v-decorator="[
+              'password',
+              { rules: [{ required: true, message: '请输入密码' }] },
+            ]"
+            placeholder="请输入密码"
+          />
+        </a-form-item>
+        <a-form-item
+          :label-col="formItemLayout.labelCol"
+          :wrapper-col="formItemLayout.wrapperCol"
+          label="站点"
+        >
+          <a-input v-decorator="['website']" placeholder="请输入所属站点" />
+        </a-form-item>
+        <a-form-item
+          :label-col="formItemLayout.labelCol"
+          :wrapper-col="formItemLayout.wrapperCol"
+          label="排序"
+        >
+          <a-input-number
+            v-decorator="['sort']"
+            :min="1"
+            :max="99999999"
+            style="width: 100%"
+          />
+        </a-form-item>
+        <a-form-item
+          :label-col="formItemLayout.labelCol"
+          :wrapper-col="formItemLayout.wrapperCol"
+          label="描述"
+        >
+          <a-textarea
+            v-decorator="[
+              'description',
+              { rules: [{ required: false, message: '请输入描述' }] },
+            ]"
+            placeholder="请输入描述"
+          />
+        </a-form-item>
+      </a-form>
+      <div
+        :style="{
+          position: 'absolute',
+          bottom: 0,
+          width: '100%',
+          borderTop: '1px solid #e8e8e8',
+          padding: '10px 16px',
+          textAlign: 'right',
+          left: 0,
+          background: '#fff',
+          borderRadius: '0 0 4px 4px',
+        }"
+      >
+        <a-space>
+          <a-button type="primary" :size="'small'" icon="check" @click="submit">
+            确定
+          </a-button>
+          <a-button type="dashed" :size="'small'" icon="close" @click="close">
+            取消
+          </a-button>
+        </a-space>
+      </div>
+    </div>
+  </a-drawer>
 </template>
 
 <script>
-  export default {
-    data() {
-
+import { ipcApiRoute } from "@/api/main";
+const formItemLayout = {
+  labelCol: { span: 4 },
+  wrapperCol: { span: 20 },
+};
+const formTailLayout = {
+  labelCol: { span: 6 },
+  wrapperCol: { span: 18, offset: 6 },
+};
+export default {
+  name: "PasswordAdd",
+  props: {
+    visible: {
+      type: Boolean,
+      require: true,
+      default: false,
     },
-    create() {
-
+    title: {
+      type: String,
+      require: false,
+      default: "修改密码",
     },
-    mounted() {
-
+    password: {
+      type: Object,
+      require: true,
+      default: () => ({})
     },
-    methods: {
-
+  },
+  data() {
+    return {
+      form: this.$form.createForm(this, {
+        account: undefined,
+        password: undefined,
+        website: undefined,
+        sort: 1,
+        description: undefined,
+      }),
+      formItemLayout,
+      formTailLayout,
+    };
+  },
+  watch: {
+    visible(newVal) {
+      if (newVal) {
+        this.$nextTick(() => {
+          console.log(this.password)
+          this.form.setFieldsValue({'account': this.password.account})
+          this.form.setFieldsValue({'password': this.password.password})
+          this.form.setFieldsValue({'website': this.password.website})
+          this.form.setFieldsValue({'sort': this.password.sort})
+          this.form.setFieldsValue({'description': this.password.description})
+        })
+      }
     }
-  }
+  },
+  create() {},
+  mounted() {},
+  methods: {
+    afterVisibleChange() {
+      this.form = this.$form.createForm(this, {
+        account: undefined,
+        password: undefined,
+        website: undefined,
+        sort: 1,
+        description: undefined,
+      });
+    },
+    close() {
+      this.$emit("close");
+    },
+    submit() {
+      this.form.validateFields((err, values) => {
+        if (!err) {
+          console.info(values);
+          let self = this;
+          const params = {
+            action: "update",
+            info: Object.assign({ ...this.password }, { ...values }),
+          };
+          this.$ipc.invoke(ipcApiRoute.passwordOperation, params).then(() => {
+            self.$emit("success");
+          });
+        }
+      });
+    },
+  },
+};
 </script>

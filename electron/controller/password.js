@@ -64,16 +64,16 @@ class PasswordController extends Controller {
         data.result = await service.password.getAllPasswordDataSqlite(paramsObj.search_belong);
         break;
       case 'addBelong' :
-        data.result = await service.password.addPasswordDataSqlite(paramsObj.info);;
+        data.result = await service.password.addPasswordBelongDataSqlite(paramsObj.info);;
         break;
       case 'delBelong' :
-        data.result = await service.password.delPasswordDataSqlite(paramsObj.delete_id);;
+        data.result = await service.password.delPasswordBelongDataSqlite(paramsObj.delete_id);;
         break;
       case 'updateBelong' :
-        data.result = await service.password.updatePasswordDataSqlite(paramsObj.info);
+        data.result = await service.password.updatePasswordBelongDataSqlite(paramsObj.info);
         break;
       case 'getBelong' :
-        data.result = await service.password.getPasswordDataSqlite(paramsObj.search_id);
+        data.result = await service.password.getPasswordBelongDataSqlite(paramsObj.search_id);
         break;
       case 'allBelong' :
         data.result = await service.password.getAllPasswordBelongDataSqlite();

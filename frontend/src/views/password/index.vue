@@ -6,7 +6,7 @@
         mode="inline"
         :default-selected-keys="[default_key]"
         :selected-keys="[current]"
-        style="padding-bottom: 40px"
+        style="margin-bottom: 40px"
         @click="menuClick"
       >
         <a-menu-item v-for="item in belongs" :key="item.id">
@@ -55,19 +55,19 @@
                     </div>
                     <div>
                       <a-icon type="calendar" style="margin-right: 4px" />
-                      {{ item.time }}
+                      {{ item.time && timestampConvert2Date(item.time) }}
                     </div>
                   </a-col>
                   <a-col :span="4">
                     <div style="text-align: right">
                       <a-button-group :size="'small'">
-                        <a-button type="primary" title="编辑">
+                        <a-button type="primary" title="编辑" @click="updatePassword(item)">
                           <a-icon type="edit" />
                         </a-button>
                         <a-button type="dashed" title="历史">
                           <a-icon type="cluster" />
                         </a-button>
-                        <a-button type="danger" title="删除">
+                        <a-button type="danger" title="删除" @click="deletePassword(item.id)">
                           <a-icon type="rest" />
                         </a-button>
                       </a-button-group>
@@ -104,6 +104,7 @@
     </a-layout>
     <password-add
       :visible="passwordAddDrawer.open"
+      :belong="passwordAddDrawer.belong"
       @close="passwordAddDrawer.open = false"
       @success="passwordAddSuccess"
     ></password-add>
@@ -112,105 +113,38 @@
       @close="belongAddDrawer.open = false"
       @success="belongAddSuccess"
     ></belong-add>
+    <password-update
+      :visible="passwordUpdateDrawer.open"
+      :password="passwordUpdateDrawer.password"
+      @close="passwordUpdateDrawer.open = false"
+      @success="passwordUpdateSuccess"
+    ></password-update>
   </a-layout>
 </template>
 <script>
 import { ipcApiRoute } from "@/api/main";
+import { timestampToDate } from "@/utils/util";
 import DbCopy from "@/components/DbCopy.vue";
 import PasswordAdd from "./components/add.vue";
+import PasswordUpdate from "./components/update.vue";
 import BelongAdd from "./components/addBelong.vue";
 
 export default {
-  components: { DbCopy, PasswordAdd, BelongAdd },
+  components: { DbCopy, PasswordAdd, BelongAdd, PasswordUpdate },
   data() {
     return {
-      belongs: [
-        {
-          id: 1,
-          belong: "ERP系统",
-          color: "",
-        },
-      ],
-      passwords: [
-        {
-          password: "asfa12@!qaQQW",
-          account: "admin",
-          description: "ERP系统管理员账号密码",
-          time: "2023-03-18 12:33:12",
-          belong: "",
-          website: "http://www.baidu.com",
-          labels: "",
-          sort: 1,
-        },
-        {
-          password: "fasfas",
-          account: "superadmin",
-          description: "MES系统管理员账号密码",
-          time: "2023-03-15 12:33:12",
-          belong: "",
-          labels: "",
-          sort: 2,
-        },
-        {
-          password: "asfa12@!qaQQW",
-          account: "admin",
-          description: "ERP系统管理员账号密码",
-          time: "2023-03-18 12:33:12",
-          belong: "",
-          labels: "",
-          sort: 1,
-        },
-        {
-          password: "asfa12@!qaQQW",
-          account: "admin",
-          description: "ERP系统管理员账号密码",
-          time: "2023-03-18 12:33:12",
-          belong: "",
-          labels: "",
-          sort: 1,
-        },
-        {
-          password: "asfa12@!qaQQW",
-          account: "admin",
-          description: "ERP系统管理员账号密码",
-          time: "2023-03-18 12:33:12",
-          belong: "",
-          labels: "",
-          sort: 1,
-        },
-        {
-          password: "asfa12@!qaQQW",
-          account: "admin",
-          description: "ERP系统管理员账号密码",
-          time: "2023-03-18 12:33:12",
-          belong: "",
-          labels: "",
-          sort: 1,
-        },
-        {
-          password: "asfa12@!qaQQW",
-          account: "admin",
-          description: "ERP系统管理员账号密码",
-          time: "2023-03-18 12:33:12",
-          belong: "",
-          labels: "",
-          sort: 1,
-        },
-        {
-          password: "asfa12@!qaQQW",
-          account: "admin",
-          description: "ERP系统管理员账号密码",
-          time: "2023-03-18 12:33:12",
-          belong: "",
-          labels: "",
-          sort: 1,
-        },
-      ],
+      belongs: [],
+      passwords: [],
       description: "",
       default_key: 1,
       current: 1,
       passwordAddDrawer: {
         open: false,
+        belong: undefined,
+      },
+      passwordUpdateDrawer: {
+        open: false,
+        password: undefined,
       },
       belongAddDrawer: {
         open: false,
@@ -263,11 +197,26 @@ export default {
       };
       this.$ipc.invoke(ipcApiRoute.passwordOperation, params).then((res) => {
         console.log("res:", res);
+        self.belongs = res.result;
         if (res.result.length == 0) {
+          self.belongs = [];
           return false;
         }
-        // self.belongs = res.result;
-        // 设置默认选中和获取密码信息
+        if (!this.current) {
+          self.current = res.result[0].id;
+          self.default_key = res.result[0].id;
+        }
+        self.getPasswords(); // 设置默认选中和获取密码信息
+      });
+    },
+    getPasswords() {
+      const self = this;
+      const params = {
+        action: "all",
+        search_belong: this.current + "",
+      };
+      this.$ipc.invoke(ipcApiRoute.passwordOperation, params).then((res) => {
+        self.passwords = res.result;
       });
     },
     dbOperation(ac) {
@@ -306,6 +255,7 @@ export default {
     menuClick(e) {
       console.log(e.key);
       this.current = e.key;
+      this.getPasswords();
     },
     addPassword() {
       // 加载添加密码弹窗页面
@@ -315,23 +265,27 @@ export default {
       // }).then(r => {
       //   console.log(r);
       // })
+      this.passwordAddDrawer.belong = this.current + "";
       this.passwordAddDrawer.open = true;
     },
     passwordAddSuccess() {
       this.passwordAddDrawer.open = false;
       this.$message.success(`添加成功`);
       // 添加查询密码逻辑
+      this.getPasswords()
     },
-    updatePassword(id) {
-      // 加载添加密码弹窗页面
-      this.$ipc
-        .invoke(ipcApiRoute.createWindow, {
-          type: "vue",
-          content: "/#/password/update/" + id,
-        })
-        .then((r) => {
-          console.log(r);
-        });
+    updatePassword(password) {
+      this.passwordUpdateDrawer.password = password;
+      this.passwordUpdateDrawer.open = true;
+    },
+    passwordUpdateSuccess() {
+      this.passwordUpdateDrawer.open = false;
+      this.$message.success(`修改成功`);
+      // 添加查询密码逻辑
+      this.getPasswords()
+    },
+    deletePassword(id) {
+      let self = this;
     },
     addPasswordBelong() {
       // 加载添加密码弹窗页面
@@ -346,8 +300,11 @@ export default {
     belongAddSuccess() {
       this.belongAddDrawer.open = false;
       this.$message.success(`添加成功`);
-      // 添加查询密码逻辑
+      this.getBelongs()
     },
+    timestampConvert2Date(timestamp) {
+      return timestampToDate(timestamp)
+    }
   },
 };
 </script>

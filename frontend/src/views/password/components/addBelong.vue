@@ -69,6 +69,7 @@
 </template>
 
 <script>
+import { ipcApiRoute } from "@/api/main";
 const formItemLayout = {
   labelCol: { span: 4 },
   wrapperCol: { span: 20 },
@@ -94,11 +95,8 @@ export default {
   data() {
     return {
       form: this.$form.createForm(this, {
-        account: undefined,
-        password: undefined,
-        website: undefined,
+        belong: undefined,
         sort: 1,
-        description: undefined,
       }),
       formItemLayout,
       formTailLayout,
@@ -120,9 +118,17 @@ export default {
       this.$emit("close");
     },
     submit() {
-      this.form.validateFields((err) => {
+      this.form.validateFields((err, values) => {
         if (!err) {
-          console.info(this.form);
+          console.info(values);
+          let self = this;
+          const params = {
+            action: "addBelong",
+            info: { ...values, color: "#c0c0c0" },
+          };
+          this.$ipc.invoke(ipcApiRoute.passwordOperation, params).then(() => {
+            self.$emit("success");
+          });
         }
       });
     },

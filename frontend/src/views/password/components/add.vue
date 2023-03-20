@@ -7,7 +7,14 @@
     :visible="visible"
     :after-visible-change="afterVisibleChange"
   >
-    <div style="background-color: transparent; height: 100%; display: flex; flex-direction: column">
+    <div
+      style="
+        background-color: transparent;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      "
+    >
       <a-form :form="form">
         <a-form-item
           :label-col="formItemLayout.labelCol"
@@ -40,12 +47,7 @@
           :wrapper-col="formItemLayout.wrapperCol"
           label="站点"
         >
-          <a-input
-            v-decorator="[
-              'website'
-            ]"
-            placeholder="请输入所属站点"
-          />
+          <a-input v-decorator="['website']" placeholder="请输入所属站点" />
         </a-form-item>
         <a-form-item
           :label-col="formItemLayout.labelCol"
@@ -53,9 +55,7 @@
           label="排序"
         >
           <a-input-number
-            v-decorator="[
-              'sort',
-            ]"
+            v-decorator="['sort']"
             :min="1"
             :max="99999999"
             style="width: 100%"
@@ -66,10 +66,10 @@
           :wrapper-col="formItemLayout.wrapperCol"
           label="描述"
         >
-          <a-textarea 
+          <a-textarea
             v-decorator="[
               'description',
-              { rules: [{ required: description, message: '请输入描述' }] },
+              { rules: [{ required: false, message: '请输入描述' }] },
             ]"
             placeholder="请输入描述"
           />
@@ -102,67 +102,77 @@
 </template>
 
 <script>
-  const formItemLayout = {
-    labelCol: { span: 4 },
-    wrapperCol: { span: 20 },
-  };
-  const formTailLayout = {
-    labelCol: { span: 6 },
-    wrapperCol: { span: 18, offset: 6 },
-  };
-  export default {
-    name: 'PasswordAdd',
-    props: {
-      visible: {
-        type: Boolean,
-        require: true,
-        default: false
-      },
-      title: {
-        type: String,
-        require: false,
-        default: '新增密码',
-      }
+import { ipcApiRoute } from "@/api/main";
+const formItemLayout = {
+  labelCol: { span: 4 },
+  wrapperCol: { span: 20 },
+};
+const formTailLayout = {
+  labelCol: { span: 6 },
+  wrapperCol: { span: 18, offset: 6 },
+};
+export default {
+  name: "PasswordAdd",
+  props: {
+    visible: {
+      type: Boolean,
+      require: true,
+      default: false,
     },
-    data() {
-      return {
-        form: this.$form.createForm(this, { 
-          account: undefined,
-          password: undefined,
-          website: undefined,
-          sort: 1,
-          description: undefined
-        }),
-        formItemLayout,
-        formTailLayout,
-      }
+    title: {
+      type: String,
+      require: false,
+      default: "新增密码",
     },
-    create() {
-
+    belong: {
+      type: String,
+      require: true,
+      default: null
     },
-    mounted() {
-
+  },
+  data() {
+    return {
+      form: this.$form.createForm(this, {
+        account: undefined,
+        password: undefined,
+        website: undefined,
+        sort: 1,
+        description: undefined,
+      }),
+      formItemLayout,
+      formTailLayout,
+    };
+  },
+  create() {},
+  mounted() {},
+  methods: {
+    afterVisibleChange() {
+      this.form = this.$form.createForm(this, {
+        account: undefined,
+        password: undefined,
+        website: undefined,
+        sort: 1,
+        description: undefined,
+      });
     },
-    methods: {
-      afterVisibleChange() {
-        this.form = this.$form.createForm(this, { 
-          account: undefined,
-          password: undefined,
-          website: undefined,
-          sort: 1,
-          description: undefined
-        })
-      },
-      close() {
-        this.$emit('close')
-      },
-      submit() {
-        this.form.validateFields(err => {
-          if (!err) {
-            console.info(this.form);
-          }
-        });
-      }
-    }
-  }
+    close() {
+      this.$emit("close");
+    },
+    submit() {
+      this.form.validateFields((err, values) => {
+        if (!err) {
+          console.info(values);
+          let self = this;
+          const params = {
+            action: "add",
+            info: { ...values, labels: '', belong: this.belong },
+          };
+          this.$ipc.invoke(ipcApiRoute.passwordOperation, params).then(() => {
+            self.$emit("success");
+          });
+        }
+      });
+    },
+  },
+};
 </script>
