@@ -164,8 +164,8 @@ export default {
       belongs: [],
       passwords: [],
       description: "",
-      default_key: 1,
-      current: 1,
+      default_key: null,
+      current: null,
       passwordAddDrawer: {
         open: false,
         belong: undefined,
@@ -370,6 +370,9 @@ export default {
             self.$ipc.invoke(ipcApiRoute.passwordOperation, params).then(() => {
               self.$message.success(`删除成功`);
               // 添加查询密码逻辑
+              // 因为删除按钮的位置会导致选中当前，所以删除后重置一下
+              self.default_key = null;
+              self.current = null;
               self.getBelongs();
             });
           }
