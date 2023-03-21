@@ -4,10 +4,14 @@
 name: Dotx Release
 
 on:
-  page_build:
-    release:
-      types:
-      - created
+  push:
+    branches:
+    - main
+    - master
+  pull_request:
+    branches:
+    - main
+    - master
 
 jobs:
   buildwin: 
