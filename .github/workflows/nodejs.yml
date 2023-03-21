@@ -1,46 +1,92 @@
-# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+# This workflow will run tests using node and then publish a package to GitHub Packages when a release is created
+# For more information see: https://docs.github.com/en/actions/publishing-packages/publishing-nodejs-packages
 
-name: Node.js CI
+name: Node.js Package
 
 on:
-  push:
-    branches:
-      - main
-      - master
-  pull_request:
-    branches:
-      - main
-      - master
-  schedule:
-    - cron: '0 2 * * *'
+  release:
+    types: [created]
 
 jobs:
-  build:
-    runs-on: ${{ matrix.os }}
-
+  buildwin: 
+    runs-on: ${{matrix.os}}
     strategy:
       fail-fast: false
       matrix:
         node-version: [16]
-        os: [ubuntu-latest, windows-latest, macos-latest]
-
+        os: [ windows-latest ] 
     steps:
-    - name: Checkout Git Source
-      uses: actions/checkout@v2
-
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
+    - uses: actions/checkout@v2 
+    - name: Install and Pack 
+      run: |
+        npm install
+        npm run build-w-64
+        npm run build-w-arm64
+    - name: Upload file
+      uses: actions/upload-artifact@v2
       with:
-        node-version: ${{ matrix.node-version }}
+        name: outs
+        path: |
+          out/*exe # window 安装包
 
-    - name: Install Dependencies
-      run: npm i -g npminstall && npminstall
-
-    - name: Continuous Integration
-      run: npm run ci
-
-    - name: Code Coverage
-      uses: codecov/codecov-action@v1
+  buildmac: 
+    runs-on: ${{matrix.os}}
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [16]
+        os: [ macOS-latest ] 
+    steps:
+    - uses: actions/checkout@v2 
+    - name: Install and Pack 
+      run: |
+        npm install
+        npm run build-m
+        npm run build-m-arm64
+    - name: Upload file
+      uses: actions/upload-artifact@v2
       with:
-        token: ${{ secrets.CODECOV_TOKEN }}
+        name: outs
+        path: |
+          out/*dmg # mac 安装包
+
+  builddebian: 
+    runs-on: ${{matrix.os}}
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [16]
+        os: [ ubuntu-latest ] 
+    steps:
+    - uses: actions/checkout@v2 
+    - name: Install and Pack 
+      run: |
+        npm install
+        npm run build-l-64
+        npm run build-l-arm64
+    - name: Upload file
+      uses: actions/upload-artifact@v2
+      with:
+        name: outs
+        path: |
+          out/*deb # debian 安装包
+
+  buildcentos: 
+    runs-on: ${{matrix.os}}
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [16]
+        os: [ centos-latest ] 
+    steps:
+    - uses: actions/checkout@v2 
+    - name: Install and Pack 
+      run: |
+        npm install
+        npm run build-lr-64
+    - name: Upload file
+      uses: actions/upload-artifact@v2
+      with:
+        name: outs
+        path: |
+          out/*rpm # redhat 安装包
