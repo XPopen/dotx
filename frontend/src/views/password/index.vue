@@ -318,15 +318,17 @@ export default {
           detail: "",
         })
         .then((r) => {
-          const params = {
-            action: "del",
-            delete_id: id + "",
-          };
-          self.$ipc.invoke(ipcApiRoute.passwordOperation, params).then(() => {
-            self.$message.success(`删除成功`);
-            // 添加查询密码逻辑
-            self.getPasswords();
-          });
+          if (r) {
+            const params = {
+              action: "del",
+              delete_id: id + "",
+            };
+            self.$ipc.invoke(ipcApiRoute.passwordOperation, params).then(() => {
+              self.$message.success(`删除成功`);
+              // 添加查询密码逻辑
+              self.getPasswords();
+            });
+          }
         });
     },
     addPasswordBelong() {
