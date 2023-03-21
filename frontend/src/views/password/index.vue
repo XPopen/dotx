@@ -12,6 +12,13 @@
           >
             <a-menu-item v-for="item in belongs" :key="item.id">
               <span>{{ item.belong }}</span>
+              <a-popconfirm style="position: absolute; right: 0; top: 13px; color: red" placement="right" ok-text="确定" cancel-text="取消" @confirm="deleteBelong(item.id)">
+                <template slot="title">
+                  <p>提示</p>
+                  <p>确认删除这条分类信息？</p>
+                </template>
+                <a-icon type="delete" title="删除" />
+              </a-popconfirm>
             </a-menu-item>
           </a-menu>
         </div>
@@ -317,6 +324,17 @@ export default {
       this.belongAddDrawer.open = false;
       this.$message.success(`添加成功`);
       this.getBelongs()
+    },
+    deleteBelong(id) {
+      const params = {
+        action: "delBelong",
+        delete_id: id + "",
+      };
+      this.$ipc.invoke(ipcApiRoute.passwordOperation, params).then(() => {
+        this.$message.success(`删除成功`);
+        // 添加查询密码逻辑
+        this.getBelongs()
+      })
     },
     timestampConvert2Date(timestamp) {
       return timestampToDate(timestamp)
