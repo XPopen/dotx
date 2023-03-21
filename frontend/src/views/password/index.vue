@@ -109,7 +109,12 @@
             shape="circle"
             :size="'large'"
             :icon="'plus'"
-            style="background-color: transparent; border-color: #1890ff; color: #1890ff"
+            style="
+              background-color: transparent;
+              border-color: #1890ff;
+              color: #1890ff;
+              box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            "
             @click="addPassword"
           >
             <template #icon>
