@@ -35,7 +35,7 @@
     "appId": "com.jiangchangxiong",
     "copyright": "JiangChangXiong",
     "directories": {
-      "output": "out"
+      "output": "out/${platform}/${arch}"
     },
     "asar": true,
     "files": [
