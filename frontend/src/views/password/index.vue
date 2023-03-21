@@ -2,7 +2,13 @@
   <a-layout id="app-menu">
     <a-layout-sider theme="light" class="layout-sider">
       <div style="max-height: 100%; height: 100%">
-        <div style="max-height: calc(100% - 40px); overflow: auto">
+        <div
+          style="
+            max-height: calc(100% - 40px);
+            overflow: auto;
+            min-height: calc(100% - 40px);
+          "
+        >
           <a-menu
             theme="light"
             mode="inline"
