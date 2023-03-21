@@ -183,29 +183,16 @@ export default {
     filterdPasswords() {
       if (this.description && this.description.length) {
         return this.passwords.filter((t) => {
-          if (t.account) {
-            if (t.account.toLowerCase().indexOf(this.description.toLowerCase()) != -1) {
-              return true;
-            }
-            if (t.description) {
-              if (t.account.toLowerCase().indexOf(this.description.toLowerCase()) != -1) {
-                return true;
-              }
-            }
-            return false;
-          } else {
-            if (t.description) {
-              if (t.description) {
-                if (
-                  t.description.toLowerCase().indexOf(this.description.toLowerCase()) !=
-                  -1
-                ) {
-                  return true;
-                }
-              }
-            }
-            return false;
+          if (t.account && t.account.toLowerCase().indexOf(this.description.toLowerCase()) != -1) {
+            return true;
           }
+          if (t.description && t.description.toLowerCase().indexOf(this.description.toLowerCase()) != -1) {
+            return true;
+          }
+          if (t.website && t.website.toLowerCase().indexOf(this.description.toLowerCase()) != -1) {
+            return true;
+          }
+          return false;
         });
       }
       return this.passwords;
