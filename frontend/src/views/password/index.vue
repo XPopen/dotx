@@ -1,8 +1,8 @@
 <template>
   <a-layout id="app-menu">
     <a-layout-sider theme="light" class="layout-sider">
-      <div style="display: flex; flex-direction: column">
-        <div>
+      <div style="max-height: 100%; height: 100%">
+        <div style="max-height: calc(100% - 40px); overflow: auto">
           <a-menu
             theme="light"
             mode="inline"
