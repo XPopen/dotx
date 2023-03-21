@@ -1,7 +1,7 @@
 <template>
   <a-layout id="app-menu">
     <a-layout-sider theme="light" class="layout-sider">
-      <div style="display: flex; flex-direction: column;">
+      <div style="display: flex; flex-direction: column">
         <div>
           <a-menu
             theme="light"
@@ -12,13 +12,12 @@
           >
             <a-menu-item v-for="item in belongs" :key="item.id">
               <span>{{ item.belong }}</span>
-              <a-popconfirm style="position: absolute; right: 0; top: 13px; color: red" placement="right" ok-text="确定" cancel-text="取消" @confirm="deleteBelong(item.id)">
-                <template slot="title">
-                  <p>提示</p>
-                  <p>确认删除这条分类信息？</p>
-                </template>
-                <a-icon type="delete" title="删除" />
-              </a-popconfirm>
+              <a-icon
+                type="delete"
+                title="删除"
+                style="position: absolute; right: 0; top: 13px; color: #ff7875"
+                @click="deleteBelong(item.id)"
+              />
             </a-menu-item>
           </a-menu>
         </div>
@@ -71,21 +70,23 @@
                   <a-col :span="4">
                     <div style="text-align: right">
                       <a-button-group :size="'small'">
-                        <a-button type="primary" title="编辑" @click="updatePassword(item)">
+                        <a-button
+                          type="primary"
+                          title="编辑"
+                          @click="updatePassword(item)"
+                        >
                           <a-icon type="edit" />
                         </a-button>
                         <a-button type="dashed" title="历史">
                           <a-icon type="cluster" />
                         </a-button>
-                        <a-popconfirm placement="left" ok-text="确定" cancel-text="取消" @confirm="deletePassword(item.id)">
-                          <template slot="title">
-                            <p>提示</p>
-                            <p>确认删除这条密码信息？</p>
-                          </template>
-                          <a-button type="danger" title="删除">
-                            <a-icon type="rest" />
-                          </a-button>
-                        </a-popconfirm>
+                        <a-button
+                          type="danger"
+                          title="删除"
+                          @click="deletePassword(item.id)"
+                        >
+                          <a-icon type="rest" />
+                        </a-button>
                       </a-button-group>
                     </div>
                   </a-col>
@@ -169,9 +170,7 @@ export default {
   },
   computed: {
     filterdPasswords() {
-      console.log("fp");
       if (this.description && this.description.length) {
-        console.log("filter");
         return this.passwords.filter((t) => {
           if (t.account) {
             if (t.account.toLowerCase().indexOf(this.description.toLowerCase()) != -1) {
@@ -212,10 +211,12 @@ export default {
         action: "allBelong",
       };
       this.$ipc.invoke(ipcApiRoute.passwordOperation, params).then((res) => {
-        console.log("res:", res);
         self.belongs = res.result;
         if (res.result.length == 0) {
           self.belongs = [];
+          self.passwords = [];
+          self.default_key = null;
+          self.current = null;
           return false;
         }
         if (!this.current) {
@@ -268,7 +269,6 @@ export default {
       });
     },
     menuClick(e) {
-      console.log(e.key);
       this.current = e.key;
       this.getPasswords();
     },
@@ -280,6 +280,10 @@ export default {
       // }).then(r => {
       //   console.log(r);
       // })
+      if (!this.current) {
+        this.$message.warn(`请先选择分类！`);
+        return;
+      }
       this.passwordAddDrawer.belong = this.current + "";
       this.passwordAddDrawer.open = true;
     },
@@ -287,7 +291,7 @@ export default {
       this.passwordAddDrawer.open = false;
       this.$message.success(`添加成功`);
       // 添加查询密码逻辑
-      this.getPasswords()
+      this.getPasswords();
     },
     updatePassword(password) {
       this.passwordUpdateDrawer.password = password;
@@ -297,18 +301,28 @@ export default {
       this.passwordUpdateDrawer.open = false;
       this.$message.success(`修改成功`);
       // 添加查询密码逻辑
-      this.getPasswords()
+      this.getPasswords();
     },
     deletePassword(id) {
-      const params = {
-        action: "del",
-        delete_id: id + "",
-      };
-      this.$ipc.invoke(ipcApiRoute.passwordOperation, params).then(() => {
-        this.$message.success(`删除成功`);
-        // 添加查询密码逻辑
-        this.getPasswords()
-      })
+      const self = this;
+      this.$ipc
+        .invoke(ipcApiRoute.systemConfirm, {
+          type: "warning",
+          title: "提示",
+          message: "是否确认删除这条密码信息？",
+          detail: "",
+        })
+        .then((r) => {
+          const params = {
+            action: "del",
+            delete_id: id + "",
+          };
+          self.$ipc.invoke(ipcApiRoute.passwordOperation, params).then(() => {
+            self.$message.success(`删除成功`);
+            // 添加查询密码逻辑
+            self.getPasswords();
+          });
+        });
     },
     addPasswordBelong() {
       // 加载添加密码弹窗页面
@@ -323,22 +337,34 @@ export default {
     belongAddSuccess() {
       this.belongAddDrawer.open = false;
       this.$message.success(`添加成功`);
-      this.getBelongs()
+      this.getBelongs();
     },
     deleteBelong(id) {
-      const params = {
-        action: "delBelong",
-        delete_id: id + "",
-      };
-      this.$ipc.invoke(ipcApiRoute.passwordOperation, params).then(() => {
-        this.$message.success(`删除成功`);
-        // 添加查询密码逻辑
-        this.getBelongs()
-      })
+      const self = this;
+      this.$ipc
+        .invoke(ipcApiRoute.systemConfirm, {
+          type: "warning",
+          title: "提示",
+          message: "是否确认删除这条分类信息？",
+          detail: "删除会将关联密码一并删除",
+        })
+        .then((r) => {
+          if (r) {
+            const params = {
+              action: "delBelong",
+              delete_id: id + "",
+            };
+            self.$ipc.invoke(ipcApiRoute.passwordOperation, params).then(() => {
+              self.$message.success(`删除成功`);
+              // 添加查询密码逻辑
+              self.getBelongs();
+            });
+          }
+        });
     },
     timestampConvert2Date(timestamp) {
-      return timestampToDate(timestamp)
-    }
+      return timestampToDate(timestamp);
+    },
   },
 };
 </script>

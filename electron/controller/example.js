@@ -152,6 +152,27 @@ class ExampleController extends Controller {
   }
 
   /**
+   * 消息提示与确认对话框
+   */
+  systemConfirm (options) {
+    if (!options) {
+      options = {}
+    }
+    const res = dialog.showMessageBoxSync(Object.assign({
+      type: 'info',
+      title: '自定义标题-message',
+      message: '自定义消息内容',
+      detail: '其它的额外信息',
+      cancelId: 1, // 用于取消对话框的按钮的索引
+      defaultId: 0, // 设置默认选中的按钮
+      buttons: ['确认', '取消'], // 按钮及索引
+    }, options))
+    let data = (res === 0) ? true : false;
+  
+    return data;
+  }
+
+  /**
    * 选择目录
    */
   selectFolder () {

@@ -8,6 +8,7 @@ const ipcApiRoute = {
   test: 'controller.example.test',
   messageShow: 'controller.example.messageShow',
   messageShowConfirm: 'controller.example.messageShowConfirm',
+  systemConfirm: 'controller.example.systemConfirm',
   selectFolder: 'controller.example.selectFolder',
   openDirectory: 'controller.example.openDirectory',
   loadViewContent: 'controller.example.loadViewContent',
