@@ -169,6 +169,11 @@ export const constantRouterMap = [
         name: 'Flag',
         component: () => import('@/views/flag/index')
       },
+      {
+        path: '/about',
+        name: 'About',
+        component: () => import('@/views/about/index')
+      },
     ]
   },
   {

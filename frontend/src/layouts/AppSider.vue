@@ -81,6 +81,12 @@ export default {
           pageName: "Other",
           params: {},
         },
+        menu_100: {
+          icon: "info-circle",
+          title: "关于",
+          pageName: "About",
+          params: {},
+        },
       },
     };
   },
