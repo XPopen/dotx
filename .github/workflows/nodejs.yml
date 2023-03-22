@@ -76,23 +76,3 @@ jobs:
         name: outs
         path: |
           out/*deb # debian 安装包
-
-  buildcentos: 
-    runs-on: ${{matrix.os}}
-    strategy:
-      fail-fast: false
-      matrix:
-        node-version: [16]
-        os: [ centos-latest ] 
-    steps:
-    - uses: actions/checkout@v2 
-    - name: Install and Pack 
-      run: |
-        npm install
-        npm run build-lr-64
-    - name: Upload file
-      uses: actions/upload-artifact@v2
-      with:
-        name: outs
-        path: |
-          out/*rpm # redhat 安装包
