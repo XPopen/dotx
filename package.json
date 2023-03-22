@@ -62,7 +62,7 @@
       "installerHeaderIcon": "./build/icons/icon.ico",
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "EE框架"
+      "shortcutName": "DotX"
     },
     "publish": [
       {
