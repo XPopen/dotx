@@ -37,7 +37,7 @@
     "directories": {
       "output": "out/${platform}/${arch}"
     },
-    "asar": true,
+    "asar": false,
     "files": [
       "**/*",
       "!frontend/",
